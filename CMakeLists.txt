@@ -11,7 +11,7 @@ add_library(OdroidAdafruitBNO055
         src/Adafruit_BNO055.cpp)
 
 target_link_libraries(OdroidAdafruitBNO055
-        PUBLIC
+        PRIVATE
         OdroidGPIO
         OdroidAdafruitSensor
         Threads::Threads)
@@ -21,38 +21,41 @@ target_include_directories(OdroidAdafruitBNO055
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
 
-# Create OdroidAdafruitBNO055 target and library
-#add_subdirectory(src)
-#add_subdirectory(examples)
+install(TARGETS OdroidAdafruitBNO055
+        EXPORT OdroidAdafruitBNO055Targets
+        RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
+        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
+        PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}"
+        COMPONENT dev)
 
-## Add all targets to the build-tree export set
-#export(TARGETS OdroidAdafruitBNO055 FILE "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055Targets.cmake")
+# Add all targets to the build-tree export set
+export(TARGETS OdroidAdafruitBNO055 FILE "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055Targets.cmake")
 
-## Export the package for use from the build-tree
-## (this registers the build-tree with a global CMake-registry)
-#export(PACKAGE OdroidAdafruitBNO055)
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE OdroidAdafruitBNO055)
 
-## Create the OdroidAdafruitBNO055Config.cmake and OdroidAdafruitBNO055ConfigVersion.cmake files
-#file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
-## ... for the build tree
-#set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
-#configure_file(cmake/OdroidAdafruitBNO055Config.cmake.in "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055Config.cmake" @ONLY)
-## ... for the install tree
-#set(CONF_INCLUDE_DIRS "\${ODROIDADAFRUITBNO055_CMAKE_DIR}/${REL_INCLUDE_DIR}")
-#configure_file(cmake/OdroidAdafruitBNO055Config.cmake.in "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/OdroidAdafruitBNO055Config.cmake" @ONLY)
-## ... for both
-#configure_file(cmake/OdroidAdafruitBNO055ConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055ConfigVersion.cmake" @ONLY)
+# Create the OdroidAdafruitBNO055Config.cmake and OdroidAdafruitBNO055ConfigVersion.cmake files
+file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
+# ... for the build tree
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
+configure_file(cmake/OdroidAdafruitBNO055Config.cmake.in "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055Config.cmake" @ONLY)
+# ... for the install tree
+set(CONF_INCLUDE_DIRS "\${ODROIDADAFRUITBNO055_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+configure_file(cmake/OdroidAdafruitBNO055Config.cmake.in "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/OdroidAdafruitBNO055Config.cmake" @ONLY)
+# ... for both
+configure_file(cmake/OdroidAdafruitBNO055ConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055ConfigVersion.cmake" @ONLY)
 
-## Install the OdroidAdafruitBNO055Config.cmake and OdroidAdafruitBNO055ConfigVersion.cmake
-#install(FILES
-        #"${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/OdroidAdafruitBNO055Config.cmake"
-        #"${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055ConfigVersion.cmake"
-        #DESTINATION
-        #"${INSTALL_CMAKE_DIR}" COMPONENT dev)
+# Install the OdroidAdafruitBNO055Config.cmake and OdroidAdafruitBNO055ConfigVersion.cmake
+install(FILES
+        "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/OdroidAdafruitBNO055Config.cmake"
+        "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055ConfigVersion.cmake"
+        DESTINATION
+        "${INSTALL_CMAKE_DIR}" COMPONENT dev)
 
-#install(DIRECTORY include/ DESTINATION ${INSTALL_INCLUDE_DIR})
+install(DIRECTORY include/ DESTINATION ${INSTALL_INCLUDE_DIR})
 
-## Install the export set for use with the install-tree
-#install(EXPORT OdroidAdafruitBNO055Targets
-        #DESTINATION "${INSTALL_CMAKE_DIR}"
-        #COMPONENT dev)
+# Install the export set for use with the install-tree
+install(EXPORT OdroidAdafruitBNO055Targets
+        DESTINATION "${INSTALL_CMAKE_DIR}"
+        COMPONENT dev)
