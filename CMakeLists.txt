@@ -7,6 +7,7 @@ project(OdroidAdafruitBNO055
 include(cmake/Setup.cmake)
 
 add_subdirectory(src)
+add_subdirectory(examples)
 
 # Add all targets to the build-tree export set
 export(TARGETS OdroidAdafruitBNO055 FILE "${PROJECT_BINARY_DIR}/OdroidAdafruitBNO055Targets.cmake")

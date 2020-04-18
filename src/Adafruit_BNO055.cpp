@@ -44,7 +44,7 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address) :
    m_sensorID{sensorID},
    m_address{address},
    m_mode{OPERATION_MODE_NDOF},
-   m_device{gpio::get<gpio::I2C::Device>(sensorID)}
+   m_device{gpio::get<gpio::I2C::Device>(address)}
 {}
 
 /*!

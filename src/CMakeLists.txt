@@ -3,9 +3,10 @@ add_library(OdroidAdafruitBNO055
         Adafruit_BNO055.cpp)
 
 target_link_libraries(OdroidAdafruitBNO055
-        PRIVATE
-        OdroidGPIO
+        PUBLIC
         OdroidAdafruitSensor
+        OdroidGPIO
+        PRIVATE
         Threads::Threads)
 
 target_include_directories(OdroidAdafruitBNO055
