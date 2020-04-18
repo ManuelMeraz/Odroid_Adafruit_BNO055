@@ -6,6 +6,21 @@ project(OdroidAdafruitBNO055
 
 include(cmake/Setup.cmake)
 
+add_library(OdroidAdafruitBNO055
+        SHARED
+        src/Adafruit_BNO055.cpp)
+
+target_link_libraries(OdroidAdafruitBNO055
+        PUBLIC
+        OdroidGPIO
+        OdroidAdafruitSensor
+        Threads::Threads)
+
+target_include_directories(OdroidAdafruitBNO055
+        PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>)
+
 # Create OdroidAdafruitBNO055 target and library
 #add_subdirectory(src)
 #add_subdirectory(examples)

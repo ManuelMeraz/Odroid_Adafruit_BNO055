@@ -237,7 +237,7 @@ inline double Matrix<1>::determinant() const
     return cell(0, 0);
 }
 
-};
+}
 
 #endif
 
