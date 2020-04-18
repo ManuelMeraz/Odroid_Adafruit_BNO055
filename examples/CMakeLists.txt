@@ -1,5 +1,6 @@
 list(APPEND examples
-        sensorapi)
+        sensorapi
+        restore_offsets)
 
 foreach(example IN LISTS examples)
     add_executable(${example} ${example}/${example}.cpp)

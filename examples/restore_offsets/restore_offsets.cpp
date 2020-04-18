@@ -1,8 +1,7 @@
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
-#include <EEPROM.h>
+#include <Adafruit_Sensor.h>
+#include <iomanip>
+#include <iostream>
 
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
    which provides a common 'type' for sensor data and some helper functions.
@@ -29,7 +28,7 @@
    2015/AUG/27  - Added calibration and system status helpers
    2015/NOV/13  - Added calibration save and restore
    */
-
+using namespace std::chrono_literals;
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (100)
 
@@ -41,22 +40,22 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 /*
     Displays some basic information on this sensor from the unified
     sensor API sensor_t type (see Adafruit_Sensor for more information)
-    */
+*/
 /**************************************************************************/
 void displaySensorDetails(void)
 {
-    sensor_t sensor;
-    bno.getSensor(&sensor);
-    Serial.println("------------------------------------");
-    Serial.print("Sensor:       "); Serial.println(sensor.name);
-    Serial.print("Driver Ver:   "); Serial.println(sensor.version);
-    Serial.print("Unique ID:    "); Serial.println(sensor.sensor_id);
-    Serial.print("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" xxx");
-    Serial.print("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" xxx");
-    Serial.print("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" xxx");
-    Serial.println("------------------------------------");
-    Serial.println("");
-    delay(500);
+   sensor_t sensor;
+   bno.getSensor(&sensor);
+   std::cout << "------------------------------------" << std::endl;
+   std::cout << "Sensor:       " << sensor.name << std::endl;
+   std::cout << "Driver Ver:   " << sensor.version << std::endl;
+   std::cout << "Unique ID:    " << sensor.sensor_id << std::endl;
+   std::cout << "Max Value:    " << sensor.max_value << " xxx" << std::endl;
+   std::cout << "Min Value:    " << sensor.min_value << " xxx" << std::endl;
+   std::cout << "Resolution:   " << sensor.resolution << " xxx" << std::endl;
+   std::cout << "------------------------------------" << std::endl;
+   std::cout << std::endl;
+   gpio::sleep(500ms);
 }
 
 /**************************************************************************/
@@ -66,53 +65,52 @@ void displaySensorDetails(void)
 /**************************************************************************/
 void displaySensorStatus(void)
 {
-    /* Get the system status values (mostly for debugging purposes) */
-    uint8_t system_status, self_test_results, system_error;
-    system_status = self_test_results = system_error = 0;
-    bno.getSystemStatus(&system_status, &self_test_results, &system_error);
+   /* Get the system status values (mostly for debugging purposes) */
+   uint8_t system_status, self_test_results, system_error;
+   system_status = self_test_results = system_error = 0;
+   bno.getSystemStatus(&system_status, &self_test_results, &system_error);
 
-    /* Display the results in the Serial Monitor */
-    Serial.println("");
-    Serial.print("System Status: 0x");
-    Serial.println(system_status, HEX);
-    Serial.print("Self Test:     0x");
-    Serial.println(self_test_results, HEX);
-    Serial.print("System Error:  0x");
-    Serial.println(system_error, HEX);
-    Serial.println("");
-    delay(500);
+   /* Display the results in the Serial Monitor */
+   std::cout << std::endl;
+   std::cout << "System Status: 0x";
+   std::cout << std::hex << system_status << std::endl;
+   std::cout << "Self Test:     0x";
+   std::cout << std::hex << self_test_results << std::endl;
+   std::cout << "System Error:  0x";
+   std::cout << std::hex << system_error << std::endl;
+   std::cout << std::endl;
+   gpio::sleep(500ms);
 }
 
 /**************************************************************************/
 /*
     Display sensor calibration status
-    */
+*/
 /**************************************************************************/
 void displayCalStatus(void)
 {
-    /* Get the four calibration values (0..3) */
-    /* Any sensor data reporting 0 should be ignored, */
-    /* 3 means 'fully calibrated" */
-    uint8_t system, gyro, accel, mag;
-    system = gyro = accel = mag = 0;
-    bno.getCalibration(&system, &gyro, &accel, &mag);
+   /* Get the four calibration values (0..3) */
+   /* Any sensor data reporting 0 should be ignored, */
+   /* 3 means 'fully calibrated" */
+   uint8_t system, gyro, accel, mag;
+   system = gyro = accel = mag = 0;
+   bno.getCalibration(&system, &gyro, &accel, &mag);
 
-    /* The data should be ignored until the system calibration is > 0 */
-    Serial.print("\t");
-    if (!system)
-    {
-        Serial.print("! ");
-    }
+   /* The data should be ignored until the system calibration is > 0 */
+   std::cout << "\t";
+   if (!system) {
+      std::cout << "! ";
+   }
 
-    /* Display the individual values */
-    Serial.print("Sys:");
-    Serial.print(system, DEC);
-    Serial.print(" G:");
-    Serial.print(gyro, DEC);
-    Serial.print(" A:");
-    Serial.print(accel, DEC);
-    Serial.print(" M:");
-    Serial.print(mag, DEC);
+   /* Display the individual values */
+   std::cout << "Sys:";
+   std::cout << std::dec << system;
+   std::cout << " G:";
+   std::cout << std::dec << gyro;
+   std::cout << " A:";
+   std::cout << std::dec << accel;
+   std::cout << " M:";
+   std::cout << std::dec << mag;
 }
 
 /**************************************************************************/
@@ -120,176 +118,120 @@ void displayCalStatus(void)
     Display the raw calibration offset and radius data
     */
 /**************************************************************************/
-void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData)
+void displaySensorOffsets(const adafruit_bno055_offsets_t& calibData)
 {
-    Serial.print("Accelerometer: ");
-    Serial.print(calibData.accel_offset_x); Serial.print(" ");
-    Serial.print(calibData.accel_offset_y); Serial.print(" ");
-    Serial.print(calibData.accel_offset_z); Serial.print(" ");
+   std::cout << "Accelerometer: ";
+   std::cout << calibData.accel_offset_x << " ";
+   std::cout << calibData.accel_offset_y << " ";
+   std::cout << calibData.accel_offset_z << " ";
 
-    Serial.print("\nGyro: ");
-    Serial.print(calibData.gyro_offset_x); Serial.print(" ");
-    Serial.print(calibData.gyro_offset_y); Serial.print(" ");
-    Serial.print(calibData.gyro_offset_z); Serial.print(" ");
+   std::cout << "\nGyro: ";
+   std::cout << calibData.gyro_offset_x << " ";
+   std::cout << calibData.gyro_offset_y << " ";
+   std::cout << calibData.gyro_offset_z << " ";
 
-    Serial.print("\nMag: ");
-    Serial.print(calibData.mag_offset_x); Serial.print(" ");
-    Serial.print(calibData.mag_offset_y); Serial.print(" ");
-    Serial.print(calibData.mag_offset_z); Serial.print(" ");
+   std::cout << "\nMag: ";
+   std::cout << calibData.mag_offset_x << " ";
+   std::cout << calibData.mag_offset_y << " ";
+   std::cout << calibData.mag_offset_z << " ";
 
-    Serial.print("\nAccel Radius: ");
-    Serial.print(calibData.accel_radius);
+   std::cout << "\nAccel Radius: ";
+   std::cout << calibData.accel_radius;
 
-    Serial.print("\nMag Radius: ");
-    Serial.print(calibData.mag_radius);
+   std::cout << "\nMag Radius: ";
+   std::cout << calibData.mag_radius;
 }
-
 
 /**************************************************************************/
 /*
     Arduino setup function (automatically called at startup)
     */
 /**************************************************************************/
-void setup(void)
+auto main() -> int
 {
-    Serial.begin(115200);
-    delay(1000);
-    Serial.println("Orientation Sensor Test"); Serial.println("");
+   std::cout << "Orientation Sensor Test" << std::endl;
+   std::cout << std::endl;
 
-    /* Initialise the sensor */
-    if (!bno.begin())
-    {
-        /* There was a problem detecting the BNO055 ... check your connections */
-        Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-        while (1);
-    }
+   /* Initialise the sensor */
+   if (!bno.begin()) {
+      /* There was a problem detecting the BNO055 ... check your connections */
+      std::cout << "Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!" << std::endl;
+      return 1;
+   }
 
-    int eeAddress = 0;
-    long bnoID;
-    bool foundCalib = false;
+   adafruit_bno055_offsets_t calibrationData;
+   sensor_t sensor;
 
-    EEPROM.get(eeAddress, bnoID);
-
-    adafruit_bno055_offsets_t calibrationData;
-    sensor_t sensor;
-
-    /*
+   /*
     *  Look for the sensor's unique ID at the beginning oF EEPROM.
     *  This isn't foolproof, but it's better than nothing.
     */
-    bno.getSensor(&sensor);
-    if (bnoID != sensor.sensor_id)
-    {
-        Serial.println("\nNo Calibration Data for this sensor exists in EEPROM");
-        delay(500);
-    }
-    else
-    {
-        Serial.println("\nFound Calibration for this sensor in EEPROM.");
-        eeAddress += sizeof(long);
-        EEPROM.get(eeAddress, calibrationData);
+   bno.getSensor(&sensor);
 
-        displaySensorOffsets(calibrationData);
+   /* Display some basic information on this sensor */
+   displaySensorDetails();
 
-        Serial.println("\n\nRestoring Calibration data to the BNO055...");
-        bno.setSensorOffsets(calibrationData);
-
-        Serial.println("\n\nCalibration data loaded into BNO055");
-        foundCalib = true;
-    }
-
-    delay(1000);
-
-    /* Display some basic information on this sensor */
-    displaySensorDetails();
-
-    /* Optional: Display current status */
-    displaySensorStatus();
+   /* Optional: Display current status */
+   displaySensorStatus();
 
    /* Crystal must be configured AFTER loading calibration data into BNO055. */
-    bno.setExtCrystalUse(true);
+   bno.setExtCrystalUse(true);
 
-    sensors_event_t event;
-    bno.getEvent(&event);
-    /* always recal the mag as It goes out of calibration very often */
-    if (foundCalib){
-        Serial.println("Move sensor slightly to calibrate magnetometers");
-        while (!bno.isFullyCalibrated())
-        {
-            bno.getEvent(&event);
-            delay(BNO055_SAMPLERATE_DELAY_MS);
-        }
-    }
-    else
-    {
-        Serial.println("Please Calibrate Sensor: ");
-        while (!bno.isFullyCalibrated())
-        {
-            bno.getEvent(&event);
+   sensors_event_t event;
+   bno.getEvent(&event);
+   std::cout << "Please Calibrate Sensor: " << std::endl;
+   while (!bno.isFullyCalibrated()) {
+      bno.getEvent(&event);
 
-            Serial.print("X: ");
-            Serial.print(event.orientation.x, 4);
-            Serial.print("\tY: ");
-            Serial.print(event.orientation.y, 4);
-            Serial.print("\tZ: ");
-            Serial.print(event.orientation.z, 4);
+      std::cout << "X: ";
+      std::cout << std::setprecision(4) << event.orientation.x;
+      std::cout << "\tY: ";
+      std::cout << std::setprecision(4) << event.orientation.y;
+      std::cout << "\tZ: ";
+      std::cout << std::setprecision(4) << event.orientation.z;
 
-            /* Optional: Display calibration status */
-            displayCalStatus();
+      /* Optional: Display calibration status */
+      displayCalStatus();
 
-            /* New line for the next sample */
-            Serial.println("");
+      /* New line for the next sample */
+      std::cout << std::endl;
 
-            /* Wait the specified delay before requesting new data */
-            delay(BNO055_SAMPLERATE_DELAY_MS);
-        }
-    }
+      /* Wait the specified delay before requesting new data */
+      gpio::sleep(std::chrono::milliseconds(BNO055_SAMPLERATE_DELAY_MS));
+   }
 
-    Serial.println("\nFully calibrated!");
-    Serial.println("--------------------------------");
-    Serial.println("Calibration Results: ");
-    adafruit_bno055_offsets_t newCalib;
-    bno.getSensorOffsets(newCalib);
-    displaySensorOffsets(newCalib);
+   std::cout << "\nFully calibrated!";
+   std::cout << "--------------------------------";
+   std::cout << "Calibration Results: ";
+   adafruit_bno055_offsets_t newCalib;
+   bno.getSensorOffsets(newCalib);
+   displaySensorOffsets(newCalib);
 
-    Serial.println("\n\nStoring calibration data to EEPROM...");
+   std::cout << "\n--------------------------------\n" << std::endl;
+   gpio::sleep(500ms);
+   while (true) {
+      /* Get a new sensor event */
+      sensors_event_t event;
+      bno.getEvent(&event);
 
-    eeAddress = 0;
-    bno.getSensor(&sensor);
-    bnoID = sensor.sensor_id;
+      /* Display the floating point data */
+      std::cout << "X: ";
+      std::cout << std::setprecision(4) << event.orientation.x;
+      std::cout << "\tY: ";
+      std::cout << std::setprecision(4) << event.orientation.y;
+      std::cout << "\tZ: ";
+      std::cout << std::setprecision(4) << event.orientation.z;
 
-    EEPROM.put(eeAddress, bnoID);
+      /* Optional: Display calibration status */
+      displayCalStatus();
 
-    eeAddress += sizeof(long);
-    EEPROM.put(eeAddress, newCalib);
-    Serial.println("Data stored to EEPROM.");
+      /* Optional: Display sensor status (debug only) */
+      // displaySensorStatus();
 
-    Serial.println("\n--------------------------------\n");
-    delay(500);
-}
+      /* New line for the next sample */
+      std::cout << std::endl;
 
-void loop() {
-    /* Get a new sensor event */
-    sensors_event_t event;
-    bno.getEvent(&event);
-
-    /* Display the floating point data */
-    Serial.print("X: ");
-    Serial.print(event.orientation.x, 4);
-    Serial.print("\tY: ");
-    Serial.print(event.orientation.y, 4);
-    Serial.print("\tZ: ");
-    Serial.print(event.orientation.z, 4);
-
-    /* Optional: Display calibration status */
-    displayCalStatus();
-
-    /* Optional: Display sensor status (debug only) */
-    //displaySensorStatus();
-
-    /* New line for the next sample */
-    Serial.println("");
-
-    /* Wait the specified delay before requesting new data */
-    delay(BNO055_SAMPLERATE_DELAY_MS);
+      /* Wait the specified delay before requesting new data */
+      gpio::sleep(std::chrono::milliseconds(BNO055_SAMPLERATE_DELAY_MS));
+   }
 }
