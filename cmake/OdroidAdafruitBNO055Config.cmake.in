@@ -1,0 +1,16 @@
+# - Config file for the OdroidAdafruitBNO055 package
+# It defines the following variables
+#  ODROIDADAFRUITBNO055_INCLUDE_DIRS - include directories for OdroidAdafruitBNO055
+#  ODROIDADAFRUITBNO055_LIBRARIES    - libraries to link against
+
+# Compute paths
+get_filename_component(ODROIDADAFRUITBNO055_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(ODROIDADAFRUITBNO055_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET OdroidAdafruitBNO055)
+    include("${ODROIDADAFRUITBNO055_CMAKE_DIR}/OdroidAdafruitBNO055Targets.cmake")
+endif()
+
+# These are IMPORTED targets created by OdroidAdafruitBNO055Targets.cmake
+set(ODROIDADAFRUITBNO055_LIBRARIES OdroidAdafruitBNO055)

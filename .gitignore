@@ -1,8 +1,41 @@
-# osx
-.DS_Store
+# Prerequisites
+*.d
 
-# doxygen
-Doxyfile*
-doxygen_sqlite3.db
-html
-*.tmp
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# clion
+.idea
+
+# ignore build directories
+*build*
+
+# ignore install directory from colcon
+*install*
