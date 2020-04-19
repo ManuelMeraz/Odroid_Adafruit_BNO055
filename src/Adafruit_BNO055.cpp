@@ -249,7 +249,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t* system_status,
       6 = System running without fusion algorithms
     */
 
-   if (system_status != 0) {
+   if (system_status != nullptr) {
       *system_status = m_bus.read_8_bits(BNO055_SYS_STAT_ADDR);
    }
 
@@ -264,7 +264,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t* system_status,
       0x0F = all good!
     */
 
-   if (self_test_result != 0) {
+   if (self_test_result != nullptr) {
       *self_test_result = m_bus.read_8_bits(BNO055_SELFTEST_RESULT_ADDR);
    }
 
@@ -282,7 +282,7 @@ void Adafruit_BNO055::getSystemStatus(uint8_t* system_status,
       A = Sensor configuration error
     */
 
-   if (system_error != 0) {
+   if (system_error != nullptr) {
       *system_error = m_bus.read_8_bits(BNO055_SYS_ERR_ADDR);
    }
 

@@ -75,11 +75,11 @@ void displaySensorStatus(void)
    /* Display the results in the Serial Monitor */
    std::cout << std::endl;
    std::cout << "System Status: 0x";
-   std::cout << std::hex << system_status << std::endl;
+   std::cout << std::hex << static_cast<uint16_t>(system_status) << std::endl;
    std::cout << "Self Test:     0x";
-   std::cout << std::hex << self_test_results << std::endl;
+   std::cout << std::hex << static_cast<uint16_t>(self_test_results) << std::endl;
    std::cout << "System Error:  0x";
-   std::cout << std::hex << system_error << std::endl;
+   std::cout << std::hex << static_cast<uint16_t>(system_error) << std::endl;
    std::cout << std::endl;
    gpio::sleep(500ms);
 }
@@ -106,13 +106,13 @@ void displayCalStatus(void)
 
    /* Display the individual values */
    std::cout << "Sys:";
-   std::cout << std::dec << system;
+   std::cout << std::dec << static_cast<uint16_t>(system);
    std::cout << " G:";
-   std::cout << std::dec << gyro;
+   std::cout << std::dec << static_cast<uint16_t>(gyro);
    std::cout << " A:";
-   std::cout << std::dec << accel;
+   std::cout << std::dec << static_cast<uint16_t>(accel);
    std::cout << " M:";
-   std::cout << std::dec << mag;
+   std::cout << std::dec << static_cast<uint16_t>(mag);
 }
 
 /**************************************************************************/
