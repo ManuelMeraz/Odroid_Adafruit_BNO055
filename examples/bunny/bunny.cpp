@@ -1,6 +1,6 @@
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
+#include <Adafruit_Sensor.h>
+#include <iostream>
 #include <utility/imumaths.h>
 
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
@@ -27,13 +27,13 @@
    2015/MAR/03  - First release (KTOWN)
 */
 
+using namespace std::chrono_literals;
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (100)
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
-
 /**************************************************************************/
 /*
     Displays some basic information on this sensor from the unified
@@ -42,18 +42,18 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 /**************************************************************************/
 void displaySensorDetails(void)
 {
-  sensor_t sensor;
-  bno.getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" xxx");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" xxx");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" xxx");
-  Serial.println("------------------------------------");
-  Serial.println("");
-  delay(500);
+   sensor_t sensor;
+   bno.getSensor(&sensor);
+   std::cout << "------------------------------------" << std::endl;
+   std::cout << "Sensor:       " << sensor.name << std::endl;
+   std::cout << "Driver Ver:   " << sensor.version << std::endl;
+   std::cout << "Unique ID:    " << sensor.sensor_id << std::endl;
+   std::cout << "Max Value:    " << sensor.max_value << " xxx" << std::endl;
+   std::cout << "Min Value:    " << sensor.min_value << " xxx" << std::endl;
+   std::cout << "Resolution:   " << sensor.resolution << " xxx" << std::endl;
+   std::cout << "------------------------------------" << std::endl;
+   std::cout << std::endl;
+   gpio::sleep(500ms);
 }
 
 /**************************************************************************/
@@ -61,71 +61,53 @@ void displaySensorDetails(void)
     Arduino setup function (automatically called at startup)
 */
 /**************************************************************************/
-void setup(void)
+auto main(void) -> int
 {
-  Serial.begin(115200);
-  Serial.println("Orientation Sensor Test"); Serial.println("");
+   std::cout << "Orientation Sensor Test" << std::endl;
 
-  /* Initialise the sensor */
-  if(!bno.begin())
-  {
-    /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while(1);
-  }
-   
-  delay(1000);
+   /* Initialise the sensor */
+   if (!bno.begin()) {
+      /* There was a problem detecting the BNO055 ... check your connections */
+      std::cout << "Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!" << std::endl;
+      return 1;
+   }
 
-  /* Use external crystal for better accuracy */
-  bno.setExtCrystalUse(true);
-   
-  /* Display some basic information on this sensor */
-  displaySensorDetails();
-}
+   gpio::sleep(1000ms);
 
-/**************************************************************************/
-/*
-    Arduino loop function, called once 'setup' is complete (your own code
-    should go here)
-*/
-/**************************************************************************/
-void loop(void)
-{
-  /* Get a new sensor event */
-  sensors_event_t event;
-  bno.getEvent(&event);
+   /* Use external crystal for better accuracy */
+   bno.setExtCrystalUse(true);
 
-  /* Board layout:
-         +----------+
-         |         *| RST   PITCH  ROLL  HEADING
-     ADR |*        *| SCL
-     INT |*        *| SDA     ^            /->
-     PS1 |*        *| GND     |            |
-     PS0 |*        *| 3VO     Y    Z-->    \-X
-         |         *| VIN
-         +----------+
-  */
+   /* Display some basic information on this sensor */
+   displaySensorDetails();
+   while (true) {
+      /* Get a new sensor event */
+      sensors_event_t event;
+      bno.getEvent(&event);
 
-  /* The processing sketch expects data as roll, pitch, heading */
-  Serial.print(F("Orientation: "));
-  Serial.print((float)event.orientation.x);
-  Serial.print(F(" "));
-  Serial.print((float)event.orientation.y);
-  Serial.print(F(" "));
-  Serial.print((float)event.orientation.z);
-  Serial.println(F(""));
+      /* Board layout:
+             +----------+
+             |         *| RST   PITCH  ROLL  HEADING
+         ADR |*        *| SCL
+         INT |*        *| SDA     ^            /->
+         PS1 |*        *| GND     |            |
+         PS0 |*        *| 3VO     Y    Z-->    \-X
+             |         *| VIN
+             +----------+
+      */
 
-  /* Also send calibration data for each sensor. */
-  uint8_t sys, gyro, accel, mag = 0;
-  bno.getCalibration(&sys, &gyro, &accel, &mag);
-  Serial.print(F("Calibration: "));
-  Serial.print(sys, DEC);
-  Serial.print(F(" "));
-  Serial.print(gyro, DEC);
-  Serial.print(F(" "));
-  Serial.print(accel, DEC);
-  Serial.print(F(" "));
-  Serial.println(mag, DEC);
+      /* The processing sketch expects data as roll, pitch, heading */
+      std::cout << "Orientation: " << static_cast<float>(event.orientation.x) << " "
+                << static_cast<float>(event.orientation.y) << " "
+                << static_cast<float>(event.orientation.z) << std::endl;
 
-  delay(BNO055_SAMPLERATE_DELAY_MS);
+      /* Also send calibration data for each sensor. */
+      uint8_t system, gyro, accel, mag = 0;
+      bno.getCalibration(&system, &gyro, &accel, &mag);
+      std::cout << "CALIBRATION: Sys =" << std::dec << static_cast<uint16_t>(system)
+                << " Gyro = " << std::dec << static_cast<uint16_t>(gyro) << " Accel = " << std::dec
+                << static_cast<uint16_t>(accel) << " Mag = " << std::dec
+                << static_cast<uint16_t>(mag) << std::endl;
+
+      gpio::sleep(std::chrono::milliseconds(BNO055_SAMPLERATE_DELAY_MS));
+   }
 }

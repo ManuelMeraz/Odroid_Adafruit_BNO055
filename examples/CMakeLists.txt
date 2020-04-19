@@ -3,7 +3,8 @@ list(APPEND examples
         restore_offsets
         read_all_data
         rawdata
-        position)
+        position
+        bunny)
 
 foreach(example IN LISTS examples)
     add_executable(${example} ${example}/${example}.cpp)
