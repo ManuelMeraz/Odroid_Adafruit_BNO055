@@ -5,14 +5,12 @@ add_library(OdroidAdafruitBNO055
 target_link_libraries(OdroidAdafruitBNO055
         PUBLIC
         OdroidAdafruitSensor
-        OdroidGPIO
-        PRIVATE
-        Threads::Threads)
+        OdroidGPIO)
 
 target_include_directories(OdroidAdafruitBNO055
         PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>)
+        $<INSTALL_INTERFACE:include/OdroidAdafruitBNO055>)
 
 install(TARGETS OdroidAdafruitBNO055
         EXPORT OdroidAdafruitBNO055Targets
