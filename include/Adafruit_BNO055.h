@@ -319,7 +319,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
    uint8_t m_address;
    adafruit_bno055_opmode_t m_mode;
 
-   gpio::I2C::Device& m_device;
+   gpio::I2C::Bus& m_bus;
 };
 
 #endif
