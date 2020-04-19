@@ -2,7 +2,8 @@ list(APPEND examples
         sensorapi
         restore_offsets
         read_all_data
-        rawdata)
+        rawdata
+        position)
 
 foreach(example IN LISTS examples)
     add_executable(${example} ${example}/${example}.cpp)
