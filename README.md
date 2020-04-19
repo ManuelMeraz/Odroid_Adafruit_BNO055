@@ -1,4 +1,6 @@
-Adafruit Unified BNO055 Driver (AHRS/Orientation)  [![Build Status](https://travis-ci.com/adafruit/Adafruit_BNO055.svg?branch=master)](https://travis-ci.com/adafruit/Adafruit_BNO055)
+##### Note: This is a port to work on the Odroid platform. 
+
+Adafruit Unified BNO055 Driver (AHRS/Orientation)  
 ================
 
 <a href="https://www.adafruit.com/product/2472"><img src="assets/board.jpg?raw=true" width="500px"></a>
@@ -29,4 +31,46 @@ Kevin (KTOWN) Townsend Adafruit Industries.
 MIT license, check license.txt for more information
 All text above must be included in any redistribution
 
-To install, use the Arduino Library Manager and search for "Adafruit BNO055" and install the library.
+You need at least GNU version 7 because some of the code uses C++ 17.
+
+To install:
+```
+# First install dependencies
+# Install wiringPi
+cd ~ && git clone https://github.com/hardkernel/wiringPi.git
+cd wiringPi
+./build
+
+# Install Odroid GPIO
+cd ~ && git clone https://github.com/ManuelMeraz/OdroidGPIO.git
+mkdir OdroidGPIO/build
+cd OdroidGPIO/build
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON ..
+make -j6 
+sudo ctest --output-on-failure # Need sudo to acces pins
+sudo make install
+
+# Install Adafruit Universal Sensor Library
+cd ~ && git clone https://github.com/ManuelMeraz/Odroid_Adafruit_Sensor.git
+mkdir Odroid_Adafruit_Sensor/build
+cd Odroid_Adafruit_Sensor/build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j6 
+sudo make install
+
+# All dependencies installed, now to install this library
+cd ~ && git clone https://github.com/ManuelMeraz/Odroid_Adafruit_BNO055.git
+mkdir Odroid_Adafruit_BNO055/build
+cd Odroid_Adafruit_BNO055/build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j6
+sudo make install
+```
+
+Done! If you want to use the library in your project. In your CMakeLists.txt it's as simple as
+```
+find_package(OdroidAdafruitBNO055 required)
+
+add_executable(main main.cpp)
+target_link_libraries(main PRIVATE OdroidAdafruitBNO055)
+```
